@@ -20,7 +20,7 @@ function Search() {
     } else {
       setLoading(true);
       // client to server api request
-      let url = "http://localhost:3000/api/getdata/" + search;
+      let url = "https://powerspot.vercel.app/api/getdata/" + search;
       try {
         const response = await axios.get(url);
         setStationData(response.data.data);

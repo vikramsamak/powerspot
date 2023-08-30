@@ -35,7 +35,7 @@ function Contactme() {
         msg: msg,
       };
       const response = await axios.post(
-        "http://localhost:3000/api/savefeedback",
+        "https://powerspot.vercel.app/api/savefeedback",
         feedback
       );
       setNotification(response.data.msg);
