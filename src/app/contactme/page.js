@@ -25,24 +25,32 @@ function Contactme() {
   };
 
   const submitFeedback = async () => {
-    if (name == "" || email == "" || sub == "" || msg == "") {
+    if (name === "" || email === "" || sub === "" || msg === "") {
       setNotification("Please fill all the inputs first...");
     } else {
-      let feedback = {
-        name: name,
-        email: email,
-        sub: sub,
-        msg: msg,
-      };
-      const response = await axios.post(
-        "https://powerspot.vercel.app/api/savefeedback",
-        feedback
-      );
-      setNotification(response.data.msg);
-      setName("");
-      setEmail("");
-      setSub("");
-      setMsg("");
+      try {
+        const feedback = {
+          name: name,
+          email: email,
+          sub: sub,
+          msg: msg,
+        };
+
+        const response = await axios.post(
+          "https://powerspot.vercel.app/api/savefeedback",
+          feedback
+        );
+
+        setNotification(response.data.msg);
+        setName("");
+        setEmail("");
+        setSub("");
+        setMsg("");
+        setTimeout(() => setNotification(""), 5000);
+      } catch (error) {
+        console.error("Error submitting feedback:", error);
+        setNotification("An error occurred while submitting feedback");
+      }
     }
   };
 
@@ -168,6 +176,25 @@ function Contactme() {
             <span className="sr-only">Info</span>
             <div>
               <span className="font-medium">Success alert!</span> {notify}
+            </div>
+          </div>
+        ) : notify === "An error occurred while submitting feedback" ? (
+          <div
+            className="mt-4   justify-center flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-transparent dark:text-yellow-300"
+            role="alert"
+          >
+            <svg
+              className="flex-shrink-0 inline w-4 h-4 mr-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <span className="sr-only">Info</span>
+            <div>
+              <span className="font-medium">Warning alert!</span> {notify}
             </div>
           </div>
         ) : (

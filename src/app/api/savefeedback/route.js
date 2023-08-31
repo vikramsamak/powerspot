@@ -1,31 +1,35 @@
-import { Client, Databases, ID } from "appwrite";
 import { NextResponse } from "next/server";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, setDoc, doc } from "firebase/firestore";
 
-const client = new Client();
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+};
 
-client
-  .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject(process.env.projectid);
-
-const databases = new Databases(client);
+const app = initializeApp(firebaseConfig);
 
 export async function POST(request, response) {
   try {
     const payload = await request.json();
 
-    const createDocumentPromise = databases.createDocument(
-      process.env.doc_id,
-      process.env.collection_id,
-      ID.unique(),
-      {
-        name: payload.name,
-        email: payload.email,
-        sub: payload.sub,
-        msg: payload.msg,
-      }
-    );
+    const feedback = {
+      name: payload.name,
+      email: payload.email,
+      sub: payload.sub,
+      msg: payload.msg,
+    };
 
-    await createDocumentPromise;
+    const db = getFirestore();
+
+    const docRef = doc(db, "feedback", feedback.name);
+
+    await setDoc(docRef, feedback);
 
     return NextResponse.json(
       {
